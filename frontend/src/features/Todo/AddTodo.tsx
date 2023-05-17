@@ -1,13 +1,13 @@
-import React, { useState, useContext } from 'react'
-import stateContext from '../reducer/context/context'
-import { type Todo } from '../reducer/types/types'
+/* eslint-disable @typescript-eslint/restrict-plus-operands */
+import React, { useState } from 'react'
+import { type Todo } from '../../store/types'
+import { observer } from 'mobx-react-lite'
 import './Todo.scss'
+import todoStore from '../../store/todoStore'
 
-const AddTodo = (): JSX.Element => {
+const AddTodo = observer((): JSX.Element => {
   const [userId, setUserId] = useState(0)
   const [title, setTitle] = useState('')
-
-  const { state, dispatch } = useContext(stateContext)
 
   const addTodo = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault()
@@ -15,10 +15,10 @@ const AddTodo = (): JSX.Element => {
       const todoNew: Todo = {
         userId,
         title,
-        id: state.todos[0].id + 1,
+        id: todoStore.todos[0].id + 1,
         completed: false
       }
-      dispatch({ type: 'ADD_TODO', payload: todoNew })
+      todoStore.addTodo(todoNew)
     }
   }
 
@@ -32,6 +32,6 @@ const AddTodo = (): JSX.Element => {
     </div>
   </form>
   )
-}
+})
 
 export default AddTodo

@@ -1,28 +1,27 @@
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import stateContext from '../reducer/context/context'
-import { type Todo } from '../reducer/types/types'
+import { type Todo } from '../../store/types'
 import './Todo.scss'
+import todoStore from '../../store/todoStore'
+import { observer } from 'mobx-react-lite'
 
-const ChangeTodo = (): JSX.Element => {
+const ChangeTodo = observer((): JSX.Element => {
   const [userId, setUserId] = useState(0)
   const [title, setTitle] = useState('')
-
-  const { state, dispatch } = useContext(stateContext)
 
   const id = useParams()
   const nav = useNavigate()
 
   useEffect(() => {
-    const todo = state.todos.find((todo) => todo.id === Number(id.id))
-    if (todo != null) {
+    const todo = todoStore.todos.find((todo) => todo.id === Number(id.id))
+    if (todo !== undefined) {
       setUserId(todo.userId)
       setTitle(todo.title)
     }
   }, [])
 
   const changeTodo = (): void => {
-    const todo = state.todos.find((todo) => todo.id === Number(id.id))
+    const todo = todoStore.todos.find((todo) => todo.id === Number(id.id))
     if (todo != null) {
       const todoNew: Todo = {
         userId,
@@ -30,7 +29,7 @@ const ChangeTodo = (): JSX.Element => {
         id: todo.id,
         completed: todo.completed
       }
-      dispatch({ type: 'EDIT_TODO', payload: todoNew })
+      todoStore.changeTodo(todoNew)
       nav('/')
     }
   }
@@ -50,6 +49,6 @@ const ChangeTodo = (): JSX.Element => {
     </form>
   </div>
   )
-}
+})
 
 export default ChangeTodo
